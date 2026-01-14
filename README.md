@@ -52,7 +52,7 @@ pip install httpx[http2] pycryptodome
 
 ## License
 
-📕本项目采用 CC NC-SA 4.0 许可证开源
+📕本项目采用 GPL-3.0 + CC BY-NC-SA 4.0 许可证开源
 
 ## 贡献者
 
