@@ -43,56 +43,6 @@ pip install httpx[http2] pycryptodome
    ```
 
 
-## 核心功能详解
-
-### 1. RSA密码加密
-
-```python
-async def get_rsa_password(self):
-    url = "https://cas.paas.cdut.edu.cn/cas/jwt/publicKey"
-    response = await self.client.get(url)
-    pub_pem = response.text
-    rsakey = RSA.import_key(pub_pem)
-    cipher = PKCS1_v1_5.new(rsakey)
-    cipher_text = cipher.encrypt(self.password.encode())
-    return "__RSA__" + base64.b64encode(cipher_text).decode()
-```
-
-- 从服务器获取RSA公钥
-- 使用公钥对密码进行加密
-- 返回加密后的密码字符串，格式为`__RSA__`+base64编码的密文
-
-### 2. CAS单点登录
-
-```python
-async def login(self):
-    # 1. 获取execution参数
-    res01 = await self.client.get(login_url)
-    execution = re.search(r'name="execution" value="(.*?)"', res01.text).group(1)
-    
-    # 2. 构造登录参数
-    encrypted_pw = await self.get_rsa_password()
-    login_data = {...}
-    
-    # 3. 提交登录请求
-    await self.client.post(login_url, data=login_data)
-```
-
-- 获取登录页面的`execution`参数
-- 构造包含加密密码的登录表单
-- 提交登录请求，自动处理重定向
-
-### 3. 批量获取课表
-
-```python
-tasks = [spider.save_room_schedule(room, kbjcmsid, xnxq01id) for room in rooms]
-await asyncio.gather(*tasks)
-```
-
-- 使用列表推导式创建多个异步任务
-- 使用`asyncio.gather()`并发执行所有任务
-- 提高课表获取效率
-
 ## 注意事项‼️
 
 1. **隐私安全**：请不要将包含个人账号密码的代码公开分享
